@@ -5,17 +5,39 @@
 #include <iomanip>
 using namespace std;
 
-string ToHex(const string& s, bool upper_case)
+string ToHex(const string &s)
 {
 	ostringstream ret;
 
 	for (string::size_type i = 0; i < s.length(); ++i)
 	{
 		int z = s[i] & 0xff;
-		ret << std::hex << std::setfill('0') << std::setw(2) << (upper_case ? std::uppercase : std::nouppercase) << z;
+		ret << std::hex << std::setfill('0') << std::setw(2) << std::uppercase << z;
 	}
 
 	return ret.str();
+}
+
+void createMBRString(const string &s)
+{
+	ostringstream ret;
+
+	for (string::size_type i = 0; i < s.length(); ++i)
+	{
+		int z = s[i] & 0xff;
+		ret << std::hex << std::setfill('0') << std::setw(2) << std::uppercase << z;
+	}
+
+	parseMBRString(ret.str());
+}
+
+void parseMBRString(string mbr)
+{
+	// at this point the MBR hex string is passed in, beginning with partition 1 and ending with 55AA boot signature
+	for (int i = 0; i < mbr.length(); ++i)
+	{
+
+	}
 }
 
 int main(int argc, char* argv[])
@@ -34,13 +56,14 @@ int main(int argc, char* argv[])
 		else {
 			cout << "File was opened successfully." << endl;
 
-			size = myfile.tellg();
+			//size = myfile.tellg();
+			size = (16 * 5) + 15;
 			memblock = new char[size];
 			myfile.seekg(0, ios::beg);
 			myfile.read(memblock, size);
 			myfile.close();
 
-			string tohexed = ToHex(string(memblock, size), true);
+			string tohexed = ToHex(string(memblock, size));
 
 			cout << tohexed << endl;
 		}
